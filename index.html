@@ -1,34 +1,76 @@
 <!DOCTYPE html>
-<html lang='es'><head><meta charset='UTF-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1.0'>
-<title>Ayelin ❤️</title>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para Ayelin ❤️</title>
 <style>
-body{margin:0;overflow:hidden;background:radial-gradient(circle,#180018,#000);font-family:Arial,sans-serif}
-#msg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;text-align:center;width:90%;text-shadow:0 0 15px #ff4da6}
-h1{color:#ff4da6}
-.heart{position:absolute;animation:float 10s linear infinite}
-@keyframes float{from{transform:translateY(100vh)}to{transform:translateY(-100px)}}
-</style></head>
+body{margin:0;overflow:hidden;background:black;font-family:Arial,sans-serif}
+canvas{display:block}
+.mensaje{
+position:absolute;top:50%;left:50%;
+transform:translate(-50%,-50%);
+color:white;text-align:center;z-index:10;
+text-shadow:0 0 10px #ff0044,0 0 30px #ff0044;
+width:90%;
+}
+h1{font-size:3rem;color:#ff3366}
+p{font-size:1.3rem}
+</style>
+</head>
 <body>
-<div id='msg'>
+<div class="mensaje">
 <h1>Ayelin ❤️</h1>
 <p>Eres y serás una de las personas que nunca pensé que me lograría enamorar tanto y en tan poco tiempo.</p>
-<p><b>Con cariño, Zamir ❤️</b></p>
 </div>
-<audio id='audio' loop>
-<source src='god-you-look-so-pretty.mp3' type='audio/mpeg'>
+
+<audio autoplay loop>
+<source src="god-you-look-so-pretty.mp3" type="audio/mpeg">
 </audio>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-function heart(){
-const h=document.createElement('div');
-h.className='heart';
-h.innerHTML='❤️';
-h.style.left=Math.random()*100+'vw';
-h.style.fontSize=(20+Math.random()*30)+'px';
-document.body.appendChild(h);
-setTimeout(()=>h.remove(),10000);
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth,window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const stars=[];
+for(let i=0;i<6000;i++){
+stars.push((Math.random()-0.5)*200);
+stars.push((Math.random()-0.5)*200);
+stars.push((Math.random()-0.5)*200);
 }
-setInterval(heart,150);
-document.body.onclick=()=>document.getElementById('audio').play();
+const sg=new THREE.BufferGeometry();
+sg.setAttribute('position',new THREE.Float32BufferAttribute(stars,3));
+const sm=new THREE.PointsMaterial({size:0.15});
+const starField=new THREE.Points(sg,sm);
+scene.add(starField);
+
+const pts=[];
+for(let i=0;i<5000;i++){
+let t=Math.random()*Math.PI*2;
+let x=16*Math.pow(Math.sin(t),3);
+let y=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);
+pts.push(x*0.2,y*0.2,(Math.random()-0.5)*2);
+}
+const hg=new THREE.BufferGeometry();
+hg.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));
+const hm=new THREE.PointsMaterial({color:0xff0044,size:0.05});
+const heart=new THREE.Points(hg,hm);
+scene.add(heart);
+
+camera.position.z=10;
+
+function animate(){
+requestAnimationFrame(animate);
+heart.rotation.y+=0.003;
+heart.rotation.x+=0.001;
+starField.rotation.y+=0.0005;
+renderer.render(scene,camera);
+}
+animate();
 </script>
-</body></html>
+</body>
+</html>
